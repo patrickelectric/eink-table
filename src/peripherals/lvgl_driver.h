@@ -3,8 +3,8 @@
 
 #include <lvgl.h>
 
-#define LV_VER_RES_MAX 640
-#define LV_HOR_RES_MAX 384
+#define LV_VER_RES_MAX 384
+#define LV_HOR_RES_MAX 640
 #define LVGL_TICK_PERIOD_MS 500
 
 // Function to initialize the display driver

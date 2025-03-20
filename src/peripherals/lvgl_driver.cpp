@@ -14,7 +14,6 @@ GxEPD2_3C<GxEPD2_750c, GxEPD2_750c::HEIGHT> display(
 );
 
 static lv_disp_draw_buf_t draw_buf;
-static lv_color_t buf[LV_HOR_RES_MAX * 6];
 
 void clear_display() {
     display.setFullWindow();
@@ -36,9 +35,6 @@ void ssd1677_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
         for (int y = area->y1; y <= area->y2; y++) {
             for (int x = area->x1; x <= area->x2; x++) {
                 lv_color_t pixel = color_p[(y - area->y1) * (area->x2 - area->x1 + 1) + (x - area->x1)];
-                if (pixel.full == 0) {
-                    Serial.printf("x: %d, y: %d, pixel: %d\n", x, y, pixel.full);
-                }
                 display.drawPixel(x, y, pixel.full == 0 ? GxEPD_BLACK : GxEPD_WHITE);
             }
         }
@@ -56,7 +52,8 @@ void lvgl_display_init() {
     display.init(115200, true, 2, false);
     clear_display();
 
-    lv_disp_draw_buf_init(&draw_buf, buf, NULL, LV_HOR_RES_MAX * 6);
+    lv_color_t *buf = (lv_color_t *)malloc(LV_HOR_RES_MAX * 100 * sizeof(lv_color_t));
+    lv_disp_draw_buf_init(&draw_buf, buf, NULL, LV_HOR_RES_MAX * 100);
 
     static lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
