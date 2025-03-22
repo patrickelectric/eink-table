@@ -144,6 +144,7 @@ void network_info()
     }
 }
 
+LV_IMG_DECLARE(bulbasaur);
 void lvgl_app_main (void)
 {
     create_chart(Rates::last10FridaysRates());
@@ -151,6 +152,11 @@ void lvgl_app_main (void)
     date(Date::today());
     calendar(Date::today());
     network_info();
+
+    lv_obj_t *img = lv_img_create(lv_scr_act());
+    lv_img_set_src(img, &bulbasaur);
+    lv_obj_align(img, LV_ALIGN_BOTTOM_MID, 0, 0);
+
 }
 
 void setup() {
