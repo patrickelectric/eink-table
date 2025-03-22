@@ -35,7 +35,16 @@ void ssd1677_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
         for (int y = area->y1; y <= area->y2; y++) {
             for (int x = area->x1; x <= area->x2; x++) {
                 lv_color_t pixel = color_p[(y - area->y1) * (area->x2 - area->x1 + 1) + (x - area->x1)];
-                display.drawPixel(x, y, pixel.full == 0 ? GxEPD_BLACK : GxEPD_WHITE);
+                uint16_t intensity = pixel.ch.red + pixel.ch.green + pixel.ch.blue;
+                /*
+                if (intensity != 1 && intensity != 0) {
+                    Serial.printf("pixel: (%d) %d, %d, %d\n\r", pixel.full, pixel.ch.red, pixel.ch.green, pixel.ch.blue);
+                }
+                */
+                auto color = pixel.full == 0 ? GxEPD_BLACK
+                                : pixel.full == 1 ? GxEPD_WHITE
+                                : GxEPD_RED;
+                display.drawPixel(x, y, color);
             }
         }
     } while (display.nextPage());

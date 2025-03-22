@@ -169,7 +169,7 @@ void setup() {
 
     lv_theme_t *th = lv_theme_default_init(
         lv_disp_get_default(),
-        lv_color_black(),    // primary (highlight) color
+        lv_color_make(0xff, 0, 0),    // primary (highlight) color
         lv_color_white(),
         false,
         lv_font_default()
