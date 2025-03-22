@@ -52,8 +52,8 @@ void lvgl_display_init() {
     display.init(115200, true, 2, false);
     clear_display();
 
-    lv_color_t *buf = (lv_color_t *)malloc(LV_HOR_RES_MAX * 100 * sizeof(lv_color_t));
-    lv_disp_draw_buf_init(&draw_buf, buf, NULL, LV_HOR_RES_MAX * 100);
+    lv_color_t *buf = (lv_color_t *)malloc(LV_HOR_RES_MAX * LV_VER_RES_MAX * sizeof(lv_color_t));
+    lv_disp_draw_buf_init(&draw_buf, buf, NULL, LV_HOR_RES_MAX * LV_VER_RES_MAX);
 
     static lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
