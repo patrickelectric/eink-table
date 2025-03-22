@@ -187,9 +187,11 @@ void loop() {
 
     auto usedSRAM = ESP.getFreeHeap();
     auto usedPSRAM = ESP.getFreePsram();
+    /*
     Serial.println("");
     Serial.print("**SRAM allocated = ");
     Serial.println(usedSRAM);
     Serial.print("**PSRAM allocated = ");
     Serial.println(usedPSRAM);
+    */
 }
