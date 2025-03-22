@@ -179,45 +179,6 @@ void setup() {
     lvgl_display_init();
 
     lvgl_app_main();
-
-
-    /*
-    lv_obj_t *chart = lv_chart_create(lv_scr_act());
-    lv_obj_set_size(chart, 150, 100);
-    lv_obj_align(chart, LV_ALIGN_BOTTOM_MID, 0, 0);
-    lv_chart_set_type(chart, LV_CHART_TYPE_LINE);
-    lv_chart_series_t *ser = lv_chart_add_series(chart, lv_color_black(), LV_CHART_AXIS_PRIMARY_Y);
-    for(uint8_t i = 0; i < 10; i++){
-        lv_chart_set_next_value(chart, ser, random(0, 100));
-    }*/
-
-    HTTPClient http;
-    http.begin("https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/1.png?raw=true");
-    int httpCode = http.GET();
-
-    if (httpCode == 200) {
-        int len = http.getSize();
-        uint8_t imgBuf[len];
-        WiFiClient *stream = http.getStreamPtr();
-        stream->readBytes(imgBuf, len);
-
-        lv_img_dsc_t img_dsc;
-        img_dsc.header.always_zero = 0;
-        img_dsc.header.w = 96;
-        img_dsc.header.h = 96;
-        img_dsc.header.cf = LV_IMG_CF_TRUE_COLOR_ALPHA;
-        img_dsc.data_size = (uint32_t)len;
-        img_dsc.data = imgBuf;
-
-        lv_obj_t *img = lv_img_create(lv_scr_act());
-        lv_img_set_src(img, &img_dsc);
-        lv_obj_align(img, LV_ALIGN_BOTTOM_MID, 0, 0);
-    } else {
-        Serial.println("Failed to fetch image");
-    }
-
-    http.end();
-
 }
 
 void loop() {
