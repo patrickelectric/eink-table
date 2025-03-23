@@ -15,6 +15,7 @@ LV_FONT_DECLARE(font_awesome);
 #include "rate_chart_widget.h"
 #include "rate_value_widget.h"
 #include "network_info_widget.h"
+#include "weather_widget.h"
 
 const char* ssid = "ssid";
 const char* password = "password";
@@ -24,7 +25,7 @@ auto rate_value = RateValueWidget();
 auto date = DateWidget();
 auto calendar = CalendarWidget();
 auto network_info = NetworkInfoWidget();
-
+auto weather = WeatherWidget();
 LV_IMG_DECLARE(bulbasaur);
 void lvgl_app_main (void)
 {
@@ -33,6 +34,7 @@ void lvgl_app_main (void)
     date.update();
     calendar.update();
     network_info.update();
+    weather.update();
 
     static lv_obj_t *img = lv_img_create(lv_scr_act());
     lv_img_set_src(img, &bulbasaur);
