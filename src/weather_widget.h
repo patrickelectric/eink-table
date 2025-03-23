@@ -60,15 +60,15 @@ public:
                 icon_txt = String("\uf128 ") + desc_str;
             }
 
-            lv_obj_t *icon = lv_label_create(cont);
+            static lv_obj_t *icon = lv_label_create(cont);
             lv_label_set_text(icon, icon_txt.c_str());
             lv_obj_set_style_text_font(icon, &font_awesome, 0);
 
-            lv_obj_t *label = lv_label_create(cont);
+            static lv_obj_t *label = lv_label_create(cont);
             String weather_info = String(desc) + " " + tempC + "°C";
             lv_label_set_text(label, weather_info.c_str());
         } else {
-            lv_obj_t *label = lv_label_create(cont);
+            static lv_obj_t *label = lv_label_create(cont);
             lv_label_set_text(label, "Weather fetch error");
         }
         http.end();

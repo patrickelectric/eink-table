@@ -36,9 +36,13 @@ void lvgl_app_main (void)
     network_info.update();
     weather.update();
 
-    static lv_obj_t *img = lv_img_create(lv_scr_act());
-    lv_img_set_src(img, &bulbasaur);
-    lv_obj_align(img, LV_ALIGN_BOTTOM_MID, 0, 0);
+    static bool once = false;
+    if (!once) {
+        once = true;
+        static lv_obj_t *img = lv_img_create(lv_scr_act());
+        lv_img_set_src(img, &bulbasaur);
+        lv_obj_align(img, LV_ALIGN_BOTTOM_MID, 0, 0);
+    }
 
 }
 
@@ -72,6 +76,7 @@ void setup() {
 void loop() {
     lvgl_app_main();
     lv_timer_handler();
+    _lv_disp_refr_timer(NULL);
     delay(5000);
 
     auto freeSRAM = ESP.getFreeHeap();
@@ -81,4 +86,12 @@ void loop() {
     Serial.println(freeSRAM);
     Serial.print("**PSRAM free = ");
     Serial.println(freePSRAM);
+
+    Serial.printf("Free heap: %u bytes\n", ESP.getFreeHeap());
+    Serial.printf("Free PSRAM: %u bytes\n", ESP.getFreePsram());
+    Serial.printf("Heap size: %u bytes\n", ESP.getHeapSize());
+    Serial.printf("Min free heap: %u bytes\n", ESP.getMinFreeHeap());
+    Serial.printf("Max alloc heap: %u bytes\n", ESP.getMaxAllocHeap());
+    Serial.printf("CPU Temp: %u °C\n", temperatureRead());
+    Serial.printf("Uptime: %lu ms\n", millis());
 }
