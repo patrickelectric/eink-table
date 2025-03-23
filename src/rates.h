@@ -1,8 +1,9 @@
+#pragma once
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
 #include <vector>
-
+#include "debug.h"
 class Rates {
 private:
     static int getWeekDayFromTimestamp(long timestamp) {
@@ -42,22 +43,44 @@ public:
         float currentRate = 0.0;
 
         HTTPClient http;
-        Serial.println("Getting current rate");
+        debug("Getting current rate");
         http.begin("https://economia.awesomeapi.com.br/json/last/USD-BRL");
         int code = http.GET();
 
         if (code == 200) {
-            Serial.println("Current rate received");
+            debug("Current rate received");
             String payload = http.getString();
             JsonDocument doc;
-            Serial.println("Deserializing current rate");
+            debug("Deserializing current rate");
             deserializeJson(doc, payload);
-            Serial.println("Current rate deserialized");
+            debug("Current rate deserialized");
             currentRate = atof(doc["USDBRL"]["bid"]);
         }
 
-        Serial.println("Ending current rate");
+        debug("Ending current rate");
         http.end();
         return currentRate;
+    }
+
+    static float rate30DaysAgo() {
+        float rate = 0.0;
+
+        HTTPClient http;
+        http.begin("https://economia.awesomeapi.com.br/json/daily/USD-BRL/30");
+        int code = http.GET();
+
+        if (code == 200) {
+            String payload = http.getString();
+            JsonDocument doc;
+            deserializeJson(doc, payload);
+
+            JsonArray arr = doc.as<JsonArray>();
+            if (arr.size() > 0) {
+                JsonObject oldest = arr[arr.size() - 1];
+                rate = atof(oldest["bid"]);
+            }
+        }
+        http.end();
+        return rate;
     }
 };

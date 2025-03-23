@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Arduino.h>
 #include <time.h>
 
@@ -19,3 +21,9 @@ public:
         return timeinfo;
     }
 };
+
+bool operator==(const tm& a, const tm& b) {
+  return a.tm_year == b.tm_year &&
+         a.tm_mon  == b.tm_mon  &&
+         a.tm_mday == b.tm_mday;
+}
