@@ -9,7 +9,6 @@ LV_FONT_DECLARE(font_awesome);
 #include "peripherals/lvgl_driver.h"
 
 #include "date.h"
-// #include "rates.h"
 #include "calendar_widget.h"
 #include "date_widget.h"
 #include "rate_chart_widget.h"
@@ -28,6 +27,7 @@ auto date = DateWidget();
 auto calendar = CalendarWidget();
 auto network_info = NetworkInfoWidget();
 auto weather = WeatherWidget();
+
 LV_IMG_DECLARE(bulbasaur);
 void lvgl_app_main (void)
 {
