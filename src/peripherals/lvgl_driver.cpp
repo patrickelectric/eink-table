@@ -1,29 +1,32 @@
 #include "lvgl_driver.h"
-#include <lvgl.h>
 #include <GxEPD2_3C.h>
+#include <lvgl.h>
 
-#define EPD_SCK_PIN  36
+#define EPD_SCK_PIN 36
 #define EPD_MOSI_PIN 35
-#define EPD_CS_PIN   34
-#define EPD_RST_PIN  1
-#define EPD_DC_PIN   0
+#define EPD_CS_PIN 34
+#define EPD_RST_PIN 1
+#define EPD_DC_PIN 0
 #define EPD_BUSY_PIN 2
 
-GxEPD2_3C<GxEPD2_750c, GxEPD2_750c::HEIGHT> display(
-    GxEPD2_750c(EPD_CS_PIN, EPD_DC_PIN, EPD_RST_PIN, EPD_BUSY_PIN)
-);
+GxEPD2_3C<GxEPD2_750c, GxEPD2_750c::HEIGHT>
+    display(GxEPD2_750c(EPD_CS_PIN, EPD_DC_PIN, EPD_RST_PIN, EPD_BUSY_PIN));
 
 static lv_disp_draw_buf_t draw_buf;
 
-void clear_display() {
+void clear_display()
+{
     display.setFullWindow();
     display.fillScreen(GxEPD_WHITE);
     display.display();
 }
 
-void ssd1677_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p) {
+void ssd1677_flush(lv_disp_drv_t* disp, const lv_area_t* area,
+    lv_color_t* color_p)
+{
     Serial.println("ssd1677_flush triggered");
-    display.setPartialWindow(area->x1, area->y1, area->x2 - area->x1 + 1, area->y2 - area->y1 + 1);
+    display.setPartialWindow(area->x1, area->y1, area->x2 - area->x1 + 1,
+        area->y2 - area->y1 + 1);
 
     Serial.println("display.firstPage()");
     Serial.printf("area->x1: %d\n\r", area->x1);
@@ -38,14 +41,15 @@ void ssd1677_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
                 /*
                 uint16_t intensity = pixel.ch.red + pixel.ch.green + pixel.ch.blue;
                 if (intensity != 1 && intensity != 0 && pixel.full != 255) {
-                    Serial.printf("pixel: (%d) %d, %d, %d\n\r", pixel.full, pixel.ch.red, pixel.ch.green, pixel.ch.blue);
+                    Serial.printf("pixel: (%d) %d, %d, %d\n\r", pixel.full,
+                pixel.ch.red, pixel.ch.green, pixel.ch.blue);
                 }
                 */
                 auto is_black = pixel.ch.red < 7 / 3 && pixel.ch.green < 7 / 3 && pixel.ch.blue < 7 / 3;
                 auto is_white = pixel.full == 255;
                 auto color = is_black ? GxEPD_BLACK
-                                : is_white ? GxEPD_WHITE
-                                : GxEPD_RED;
+                    : is_white        ? GxEPD_WHITE
+                                      : GxEPD_RED;
                 display.drawPixel(x, y, color);
             }
         }
@@ -54,16 +58,15 @@ void ssd1677_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
     lv_disp_flush_ready(disp);
 }
 
-void increase_lvgl_tick(void *arg) {
-    lv_tick_inc(LVGL_TICK_PERIOD_MS);
-}
+void increase_lvgl_tick(void* arg) { lv_tick_inc(LVGL_TICK_PERIOD_MS); }
 
-void lvgl_display_init() {
+void lvgl_display_init()
+{
     SPI.begin(EPD_SCK_PIN, -1, EPD_MOSI_PIN);
     display.init(115200, true, 2, false);
     clear_display();
 
-    lv_color_t *buf = (lv_color_t *)malloc(LV_HOR_RES_MAX * LV_VER_RES_MAX * sizeof(lv_color_t));
+    lv_color_t* buf = (lv_color_t*)malloc(LV_HOR_RES_MAX * LV_VER_RES_MAX * sizeof(lv_color_t));
     lv_disp_draw_buf_init(&draw_buf, buf, NULL, LV_HOR_RES_MAX * LV_VER_RES_MAX);
 
     static lv_disp_drv_t disp_drv;

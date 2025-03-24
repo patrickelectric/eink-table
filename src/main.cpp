@@ -1,8 +1,8 @@
 #include <Arduino.h>
+#include <WiFi.h>
 #include <lvgl.h>
 #include <time.h>
 #include <vector>
-#include <WiFi.h>
 
 LV_FONT_DECLARE(font_awesome);
 
@@ -10,9 +10,9 @@ LV_FONT_DECLARE(font_awesome);
 
 #include "widgets/calendar_widget.h"
 #include "widgets/date_widget.h"
+#include "widgets/network_info_widget.h"
 #include "widgets/rate_chart_widget.h"
 #include "widgets/rate_value_widget.h"
-#include "widgets/network_info_widget.h"
 #include "widgets/weather_widget.h"
 
 #include "sprites/all.h"
@@ -28,7 +28,7 @@ auto network_info = NetworkInfoWidget();
 auto weather = WeatherWidget();
 
 LV_IMG_DECLARE(bulbasaur);
-void lvgl_app_main (void)
+void lvgl_app_main(void)
 {
     rate_chart.update();
     rate_value.update();
@@ -37,39 +37,38 @@ void lvgl_app_main (void)
     network_info.update();
     weather.update();
 
-    static lv_obj_t *img = lv_img_create(lv_scr_act());
+    static lv_obj_t* img = lv_img_create(lv_scr_act());
     lv_img_set_src(img, all_sprites()[random(0, 151)]);
     lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
 }
 
-void setup() {
+void setup()
+{
     Serial.begin(115200);
     Serial.println("Starting...");
 
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
-        Serial.printf("Connecting to %s (%d)\n\r", ssid, WiFi.status());
+        Serial.printf("Connecting to %s: %s\n\r", ssid, NetworkInfoWidget::wifi_status_to_string().c_str());
     }
 
     Date::init();
 
     lv_init();
 
-    lv_theme_t *th = lv_theme_default_init(
+    lv_theme_t* th = lv_theme_default_init(
         lv_disp_get_default(),
-        lv_color_make(0xff, 0, 0),    // primary (highlight) color
-        lv_color_white(),
-        false,
-        lv_font_default()
-    );
+        lv_color_make(0xff, 0, 0), // primary (highlight) color
+        lv_color_white(), false, lv_font_default());
     lv_disp_set_theme(lv_disp_get_default(), th);
 
     lvgl_display_init();
     lvgl_app_main();
 }
 
-void loop() {
+void loop()
+{
     lvgl_app_main();
     lv_timer_handler();
     _lv_disp_refr_timer(NULL);
@@ -88,6 +87,7 @@ void loop() {
     Serial.printf("Heap size: %u bytes\n", ESP.getHeapSize());
     Serial.printf("Min free heap: %u bytes\n", ESP.getMinFreeHeap());
     Serial.printf("Max alloc heap: %u bytes\n", ESP.getMaxAllocHeap());
-    Serial.printf("CPU Temp: %u °C\n", temperatureRead());
+    Serial.printf("CPU Temp: %.2f °C\n", temperatureRead());
     Serial.printf("Uptime: %lu ms\n", millis());
+    Serial.printf("Time: %s\n", tm_to_string(Date::today()).c_str());
 }

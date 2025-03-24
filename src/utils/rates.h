@@ -1,18 +1,20 @@
 #pragma once
+#include "debug.h"
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
 #include <vector>
-#include "debug.h"
 class Rates {
 private:
-    static int getWeekDayFromTimestamp(long timestamp) {
-        struct tm *tm = localtime(&timestamp);
+    static int getWeekDayFromTimestamp(long timestamp)
+    {
+        struct tm* tm = localtime(&timestamp);
         return tm->tm_wday; // 0=Sunday, 5=Friday
     }
 
 public:
-    static std::vector<float> last10FridaysRates() {
+    static std::vector<float> last10FridaysRates()
+    {
         std::vector<float> fridaysRates;
 
         HTTPClient http;
@@ -25,13 +27,14 @@ public:
             deserializeJson(doc, payload);
 
             for (JsonObject rate : doc.as<JsonArray>()) {
-            long timestamp = atol(rate["timestamp"]);
-            if (getWeekDayFromTimestamp(timestamp) == 5) { // Friday
-                float value = atof(rate["bid"]);
-                fridaysRates.push_back(value);
-            }
+                long timestamp = atol(rate["timestamp"]);
+                if (getWeekDayFromTimestamp(timestamp) == 5) { // Friday
+                    float value = atof(rate["bid"]);
+                    fridaysRates.push_back(value);
+                }
 
-            if (fridaysRates.size() >= 10) break;
+                if (fridaysRates.size() >= 10)
+                    break;
             }
         }
         http.end();
@@ -39,7 +42,8 @@ public:
         return fridaysRates;
     }
 
-    static float currentRate() {
+    static float currentRate()
+    {
         float currentRate = 0.0;
 
         HTTPClient http;
@@ -62,24 +66,29 @@ public:
         return currentRate;
     }
 
-    static float rate30DaysAgo() {
+    static float rate30DaysAgo()
+    {
         float rate = 0.0;
 
         HTTPClient http;
+        debug("Getting rate 30 days ago");
         http.begin("https://economia.awesomeapi.com.br/json/daily/USD-BRL/30");
         int code = http.GET();
 
         if (code == 200) {
+            debug("Rate 30 days ago received");
             String payload = http.getString();
             JsonDocument doc;
+            debug("Deserializing rate 30 days ago");
             deserializeJson(doc, payload);
-
+            debug("Rate 30 days ago deserialized");
             JsonArray arr = doc.as<JsonArray>();
             if (arr.size() > 0) {
                 JsonObject oldest = arr[arr.size() - 1];
                 rate = atof(oldest["bid"]);
             }
         }
+        debug("Ending rate 30 days ago");
         http.end();
         return rate;
     }

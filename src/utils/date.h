@@ -5,14 +5,16 @@
 
 class Date {
 public:
-    static void init() {
+    static void init()
+    {
         const char* ntpServer = "pool.ntp.org";
         const long gmtOffset_sec = -10800; // GMT-3 for Brazil // 3 hours * 3600 seconds/hour
         const int daylightOffset_sec = 0;
         configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
     }
 
-    static tm today() {
+    static tm today()
+    {
         struct tm timeinfo;
         if (!getLocalTime(&timeinfo)) {
             Serial.println("Failed to get time");
@@ -22,8 +24,14 @@ public:
     }
 };
 
-bool operator==(const tm& a, const tm& b) {
-  return a.tm_year == b.tm_year &&
-         a.tm_mon  == b.tm_mon  &&
-         a.tm_mday == b.tm_mday;
+bool operator==(const tm& a, const tm& b)
+{
+    return a.tm_year == b.tm_year && a.tm_mon == b.tm_mon && a.tm_mday == b.tm_mday;
+}
+
+String tm_to_string(tm date)
+{
+    char buffer[64];
+    strftime(buffer, sizeof(buffer), "%H:%M:%S %Y-%m-%d", &date);
+    return String(buffer);
 }

@@ -1,17 +1,20 @@
 #pragma once
 
-#include <lvgl.h>
 #include "utils/date.h"
 #include "utils/debug.h"
+#include <lvgl.h>
 
 class CalendarWidget {
     tm last_update;
+
 public:
     CalendarWidget()
-        : last_update() {
+        : last_update()
+    {
     }
 
-    static void update_calendar(tm date) {
+    static void update_calendar(tm date)
+    {
         const int year = date.tm_year + 1900;
         const int month = date.tm_mon;
         const int day = date.tm_mday;
@@ -39,13 +42,16 @@ public:
         lv_obj_set_style_text_color(calendar, lv_color_white(), LV_STATE_CHECKED);
     }
 
-    void update() {
+    void update()
+    {
         debug("Updating...");
         auto today = Date::today();
         if (today == last_update) {
             return;
         }
-        debug("today: %d/%d/%d, last_update: %d/%d/%d", today.tm_mday, today.tm_mon, today.tm_year + 1900, last_update.tm_mday, last_update.tm_mon, last_update.tm_year + 1900);
+        debug("today: %d/%d/%d, last_update: %d/%d/%d", today.tm_mday, today.tm_mon,
+            today.tm_year + 1900, last_update.tm_mday, last_update.tm_mon,
+            last_update.tm_year + 1900);
         last_update = today;
         CalendarWidget::update_calendar(today);
     }
