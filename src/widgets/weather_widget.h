@@ -3,10 +3,12 @@
 #include <lvgl.h>
 #include <WiFi.h>
 #include <vector>
-#include "date.h"
-#include "debug.h"
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+
+#include "utils/date.h"
+#include "utils/debug.h"
+
 class WeatherWidget {
     tm last_update;
 public:

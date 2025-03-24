@@ -3,9 +3,9 @@
 #include <algorithm>
 #include <lvgl.h>
 #include <vector>
-#include "date.h"
-#include "debug.h"
-#include "rates.h"
+#include "utils/date.h"
+#include "utils/debug.h"
+#include "utils/rates.h"
 
 class RateChartWidget {
     std::vector<float> points;

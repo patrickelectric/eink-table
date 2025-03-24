@@ -3,6 +3,7 @@
 import requests
 import sys
 import os
+
 from PIL import Image
 from io import BytesIO
 

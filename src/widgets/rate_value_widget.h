@@ -1,8 +1,8 @@
 #pragma once
 
 #include <lvgl.h>
-#include "date.h"
-#include "rates.h"
+#include "utils/date.h"
+#include "utils/rates.h"
 
 class RateValueWidget {
     float value;

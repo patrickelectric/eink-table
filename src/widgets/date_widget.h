@@ -1,8 +1,8 @@
 #pragma once
 
 #include <lvgl.h>
-#include "date.h"
-#include "debug.h"
+#include "utils/date.h"
+#include "utils/debug.h"
 
 class DateWidget {
     tm last_update;

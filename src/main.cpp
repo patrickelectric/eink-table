@@ -8,13 +8,12 @@ LV_FONT_DECLARE(font_awesome);
 
 #include "peripherals/lvgl_driver.h"
 
-#include "date.h"
-#include "calendar_widget.h"
-#include "date_widget.h"
-#include "rate_chart_widget.h"
-#include "rate_value_widget.h"
-#include "network_info_widget.h"
-#include "weather_widget.h"
+#include "widgets/calendar_widget.h"
+#include "widgets/date_widget.h"
+#include "widgets/rate_chart_widget.h"
+#include "widgets/rate_value_widget.h"
+#include "widgets/network_info_widget.h"
+#include "widgets/weather_widget.h"
 
 #include "sprites/all.h"
 
