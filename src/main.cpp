@@ -17,6 +17,8 @@ LV_FONT_DECLARE(font_awesome);
 #include "network_info_widget.h"
 #include "weather_widget.h"
 
+#include "sprites/all.h"
+
 const char* ssid = "ssid";
 const char* password = "password";
 
@@ -36,14 +38,9 @@ void lvgl_app_main (void)
     network_info.update();
     weather.update();
 
-    static bool once = false;
-    if (!once) {
-        once = true;
-        static lv_obj_t *img = lv_img_create(lv_scr_act());
-        lv_img_set_src(img, &bulbasaur);
-        lv_obj_align(img, LV_ALIGN_BOTTOM_MID, 0, 0);
-    }
-
+    static lv_obj_t *img = lv_img_create(lv_scr_act());
+    lv_img_set_src(img, all_sprites()[random(0, 151)]);
+    lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
 }
 
 void setup() {
