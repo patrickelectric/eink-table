@@ -7,7 +7,7 @@
 LV_FONT_DECLARE(font_awesome);
 
 #include "peripherals/lvgl_driver.h"
-
+#include "utils/server.h"
 #include "widgets/calendar_widget.h"
 #include "widgets/date_widget.h"
 #include "widgets/network_info_widget.h"
@@ -65,6 +65,8 @@ void setup()
 
     lvgl_display_init();
     lvgl_app_main();
+
+    WebServerManager::self()->begin();
 }
 
 void loop()
