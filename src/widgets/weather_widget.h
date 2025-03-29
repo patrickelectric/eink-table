@@ -95,6 +95,7 @@ public:
             last_update.tm_year + 1900);
 
         if (WeatherWidget::update_info()) {
+            debug("Weather updated!");
             last_update = today;
         }
     }

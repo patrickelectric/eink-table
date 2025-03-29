@@ -87,7 +87,7 @@ public:
         while(file) {
             String fname = file.name();
             if (fname.startsWith("log_") && fname.endsWith(".txt")) {
-                logFiles.push_back(fname);
+                logFiles.push_back("/" + fname);
             }
             file = root.openNextFile();
         }
