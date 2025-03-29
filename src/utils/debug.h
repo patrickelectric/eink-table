@@ -11,7 +11,7 @@ private:
     bool initialized;
 
     Logger() : initialized(false) {
-        if (LittleFS.begin()) {
+        if (LittleFS.begin(true)) {
             int nextIndex = 0;
             File root = LittleFS.open("/");
             File file = root.openNextFile();
