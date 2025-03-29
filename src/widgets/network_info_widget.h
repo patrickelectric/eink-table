@@ -6,7 +6,7 @@
 
 #include "utils/date.h"
 #include "utils/debug.h"
-
+#include "utils/network.h"
 class NetworkInfoWidget {
     tm last_update;
 
@@ -14,30 +14,6 @@ public:
     NetworkInfoWidget()
         : last_update()
     {
-    }
-
-    static String wifi_status_to_string()
-    {
-        switch (WiFi.status()) {
-        case WL_NO_SHIELD:
-            return "No Shield";
-        case WL_IDLE_STATUS:
-            return "Idle";
-        case WL_NO_SSID_AVAIL:
-            return "No SSID";
-        case WL_SCAN_COMPLETED:
-            return "Scan Completed";
-        case WL_CONNECTED:
-            return "Connected";
-        case WL_CONNECT_FAILED:
-            return "Failed";
-        case WL_CONNECTION_LOST:
-            return "Lost";
-        case WL_DISCONNECTED:
-            return "Disconnected";
-        default:
-            return "Unknown";
-        }
     }
 
     static void update_network_info()
@@ -60,7 +36,7 @@ public:
         netInfo.push_back("SSID: " + WiFi.SSID());
         netInfo.push_back("IP: " + WiFi.localIP().toString());
         netInfo.push_back("RSSI: " + String(WiFi.RSSI()) + " dBm");
-        netInfo.push_back("Status: " + wifi_status_to_string());
+        netInfo.push_back("Status: " + Network::wifiStatusToString(WiFi.status()));
         for (const auto& info : netInfo) {
             lv_obj_t* label = lv_label_create(cont);
             lv_label_set_text(label, info.c_str());

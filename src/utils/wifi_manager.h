@@ -2,6 +2,7 @@
 
 #include <WiFi.h>
 #include "debug.h"
+#include "network.h"
 
 class WiFiManager {
 private:
@@ -23,7 +24,8 @@ private:
                 while (WiFi.status() != WL_CONNECTED && attempts < 10) {
                     vTaskDelay(pdMS_TO_TICKS(1000));
                     attempts++;
-                    debug("Connecting to %s: %s", wifi->ssid, wifi->getStatusString().c_str());
+                    debug("Connecting to %s: %s", wifi->ssid,
+                        Network::wifiStatusToString(WiFi.status()).c_str());
                 }
 
                 if (WiFi.status() == WL_CONNECTED) {
@@ -35,29 +37,6 @@ private:
     }
 
     WiFiManager() : initialized(false), wifiTaskHandle(nullptr), ssid(nullptr), password(nullptr) {}
-
-    String getStatusString() const {
-        switch (WiFi.status()) {
-            case WL_CONNECTED:
-                return "Connected";
-            case WL_NO_SHIELD:
-                return "No WiFi shield";
-            case WL_IDLE_STATUS:
-                return "Idle";
-            case WL_NO_SSID_AVAIL:
-                return "No SSID available";
-            case WL_SCAN_COMPLETED:
-                return "Scan completed";
-            case WL_CONNECT_FAILED:
-                return "Connection failed";
-            case WL_CONNECTION_LOST:
-                return "Connection lost";
-            case WL_DISCONNECTED:
-                return "Disconnected";
-            default:
-                return "Unknown";
-        }
-    }
 
 public:
     static WiFiManager* self() {
@@ -98,7 +77,7 @@ public:
     }
 
     void scan() {
-          debug("Scanning for networks...");
+        debug("Scanning for networks...");
         int n = WiFi.scanNetworks();
 
         if (n == 0) {
@@ -109,34 +88,10 @@ public:
             debug("----------------------------------------------------------------");
 
             for (int i = 0; i < n; ++i) {
-                String security;
-                switch(WiFi.encryptionType(i)) {
-                    case WIFI_AUTH_OPEN:
-                        security = "Open";
-                        break;
-                    case WIFI_AUTH_WEP:
-                        security = "WEP";
-                        break;
-                    case WIFI_AUTH_WPA_PSK:
-                        security = "WPA-PSK";
-                        break;
-                    case WIFI_AUTH_WPA2_PSK:
-                        security = "WPA2-PSK";
-                        break;
-                    case WIFI_AUTH_WPA_WPA2_PSK:
-                        security = "WPA/WPA2";
-                        break;
-                    case WIFI_AUTH_WPA2_ENTERPRISE:
-                        security = "WPA2-ENT";
-                        break;
-                    default:
-                        security = "Unknown";
-                }
-
                 String rssiStr = String(WiFi.RSSI(i)) + " dBm";
                 debug("%-32s | %-12s | %-8s",
                     WiFi.SSID(i).c_str(),
-                    security.c_str(),
+                    Network::encryptionTypeToString(WiFi.encryptionType(i)).c_str(),
                     rssiStr.c_str()
                 );
             }
