@@ -1,13 +1,13 @@
 #pragma once
 
 #include <ArduinoJson.h>
-#include <HTTPClient.h>
 #include <WiFi.h>
 #include <lvgl.h>
 #include <vector>
 
 #include "utils/date.h"
 #include "utils/debug.h"
+#include "utils/request.h"
 
 class WeatherWidget {
     tm last_update;
@@ -32,15 +32,11 @@ public:
         lv_obj_set_flex_align(cont, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER,
             LV_FLEX_ALIGN_CENTER);
 
-        HTTPClient http;
-        http.begin("https://wttr.in/Florianopolis?format=j1");
-        int code = http.GET();
+        Request request("https://wttr.in/Florianopolis?format=j1");
 
-        auto sucess = false;
-        if (code == 200) {
-            String payload = http.getString();
+        if (request.isSuccessful()) {
             JsonDocument doc;
-            deserializeJson(doc, payload);
+            deserializeJson(doc, request.getResponse());
 
             const char* tempC = doc["current_condition"][0]["temp_C"];
             const char* desc = doc["current_condition"][0]["weatherDesc"][0]["value"];
@@ -74,13 +70,12 @@ public:
             static lv_obj_t* label = lv_label_create(cont);
             String weather_info = String(desc) + " " + tempC + "°C";
             lv_label_set_text(label, weather_info.c_str());
-            sucess = true;
+            return true;
         } else {
             static lv_obj_t* label = lv_label_create(cont);
             lv_label_set_text(label, "Weather fetch error");
+            return false;
         }
-        http.end();
-        return sucess;
     }
 
     void update()

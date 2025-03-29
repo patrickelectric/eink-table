@@ -1,9 +1,10 @@
 #pragma once
 #include "debug.h"
+#include "request.h"
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <HTTPClient.h>
 #include <vector>
+
 class Rates {
 private:
     static int getWeekDayFromTimestamp(long timestamp)
@@ -17,14 +18,11 @@ public:
     {
         std::vector<float> fridaysRates;
 
-        HTTPClient http;
-        http.begin("https://economia.awesomeapi.com.br/json/daily/USD-BRL/70");
-        int code = http.GET();
+        Request request("https://economia.awesomeapi.com.br/json/daily/USD-BRL/70");
 
-        if (code == 200) {
-            String payload = http.getString();
+        if (request.isSuccessful()) {
             JsonDocument doc;
-            deserializeJson(doc, payload);
+            deserializeJson(doc, request.getResponse());
 
             for (JsonObject rate : doc.as<JsonArray>()) {
                 long timestamp = atol(rate["timestamp"]);
@@ -37,59 +35,45 @@ public:
                     break;
             }
         }
-        http.end();
 
         return fridaysRates;
     }
 
     static float currentRate()
     {
-        float currentRate = 0.0;
-
-        HTTPClient http;
         debug("Getting current rate");
-        http.begin("https://economia.awesomeapi.com.br/json/last/USD-BRL");
-        int code = http.GET();
+        Request request("https://economia.awesomeapi.com.br/json/last/USD-BRL");
 
-        if (code == 200) {
+        if (request.isSuccessful()) {
             debug("Current rate received");
-            String payload = http.getString();
             JsonDocument doc;
             debug("Deserializing current rate");
-            deserializeJson(doc, payload);
+            deserializeJson(doc, request.getResponse());
             debug("Current rate deserialized");
-            currentRate = atof(doc["USDBRL"]["bid"]);
+            return atof(doc["USDBRL"]["bid"]);
         }
 
-        debug("Ending current rate");
-        http.end();
-        return currentRate;
+        return 0.0;
     }
 
     static float rate30DaysAgo()
     {
-        float rate = 0.0;
-
-        HTTPClient http;
         debug("Getting rate 30 days ago");
-        http.begin("https://economia.awesomeapi.com.br/json/daily/USD-BRL/30");
-        int code = http.GET();
+        Request request("https://economia.awesomeapi.com.br/json/daily/USD-BRL/30");
 
-        if (code == 200) {
+        if (request.isSuccessful()) {
             debug("Rate 30 days ago received");
-            String payload = http.getString();
             JsonDocument doc;
             debug("Deserializing rate 30 days ago");
-            deserializeJson(doc, payload);
+            deserializeJson(doc, request.getResponse());
             debug("Rate 30 days ago deserialized");
             JsonArray arr = doc.as<JsonArray>();
             if (arr.size() > 0) {
                 JsonObject oldest = arr[arr.size() - 1];
-                rate = atof(oldest["bid"]);
+                return atof(oldest["bid"]);
             }
         }
-        debug("Ending rate 30 days ago");
-        http.end();
-        return rate;
+
+        return 0.0;
     }
 };
