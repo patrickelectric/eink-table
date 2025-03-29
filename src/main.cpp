@@ -58,6 +58,7 @@ void setup()
     }
 
     Date::init();
+    WebServerManager::self()->begin();
 
     lv_init();
 
@@ -69,8 +70,6 @@ void setup()
 
     lvgl_display_init();
     lvgl_app_main();
-
-    WebServerManager::self()->begin();
 }
 
 void loop()
