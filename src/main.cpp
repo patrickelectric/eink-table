@@ -49,11 +49,11 @@ void setup()
 
     while (WiFi.status() != WL_CONNECTED) {
         static int counter = 0;
-        if (counter++ % 10 == 0) {
+        if (counter++ % 30 == 0) {
             Serial.println("Connecting to WiFi...");
             WiFi.begin(ssid, password);
         }
-        delay(500);
+        delay(1000);
         Serial.printf("Connecting to %s: %s\n\r", ssid, NetworkInfoWidget::wifi_status_to_string().c_str());
     }
 
