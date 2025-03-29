@@ -47,8 +47,12 @@ void setup()
     Serial.begin(115200);
     Serial.println("Starting...");
 
-    WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
+        static int counter = 0;
+        if (counter++ % 10 == 0) {
+            Serial.println("Connecting to WiFi...");
+            WiFi.begin(ssid, password);
+        }
         delay(500);
         Serial.printf("Connecting to %s: %s\n\r", ssid, NetworkInfoWidget::wifi_status_to_string().c_str());
     }
