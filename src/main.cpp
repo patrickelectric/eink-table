@@ -18,8 +18,9 @@ LV_FONT_DECLARE(font_awesome);
 #include "sprites/all.h"
 #include "utils/wifi_manager.h"
 
-const char* ssid = "ssid";
-const char* password = "password";
+const std::vector<WiFiCredentials> wifi_networks = {
+    {"ssid", "password"},
+};
 
 auto rate_chart = RateChartWidget();
 auto rate_value = RateValueWidget();
@@ -48,7 +49,9 @@ void setup()
     Serial.begin(115200);
     Serial.println("Starting...");
 
-    WiFiManager::self()->begin(ssid, password);
+    // Initialize with vector of networks
+    WiFiManager::self()->begin(wifi_networks);
+
     while (!WiFiManager::self()->isConnected()) {
         delay(100);
     }
