@@ -16,6 +16,7 @@ LV_FONT_DECLARE(font_awesome);
 #include "widgets/weather_widget.h"
 
 #include "sprites/all.h"
+#include "utils/wifi_manager.h"
 
 const char* ssid = "ssid";
 const char* password = "password";
@@ -47,14 +48,9 @@ void setup()
     Serial.begin(115200);
     Serial.println("Starting...");
 
-    while (WiFi.status() != WL_CONNECTED) {
-        static int counter = 0;
-        if (counter++ % 30 == 0) {
-            Serial.println("Connecting to WiFi...");
-            WiFi.begin(ssid, password);
-        }
-        delay(1000);
-        Serial.printf("Connecting to %s: %s\n\r", ssid, NetworkInfoWidget::wifi_status_to_string().c_str());
+    WiFiManager::self()->begin(ssid, password);
+    while (!WiFiManager::self()->isConnected()) {
+        delay(100);
     }
 
     Date::init();
