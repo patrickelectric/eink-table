@@ -26,14 +26,13 @@ public:
     }
 
     void update() {
-        debug("Checking Pokemon update...");
+        debug("Updating...");
         auto now = Date::today();
 
         if (now.tm_hour != last_update.tm_hour ||
             now.tm_mday != last_update.tm_mday) {
 
-            debug("Updating Pokemon: hour changed from %d to %d",
-                last_update.tm_hour, now.tm_hour);
+            debug("Updating Pokemon!");
 
             PokemonWidget::update_pokemon(random(0, 151));
             last_update = now;
