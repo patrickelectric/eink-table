@@ -85,7 +85,7 @@ public:
     {
         debug("Updating...");
         auto today = Date::today();
-        if (today == last_update) {
+        if (today == last_update && today.tm_hour == last_update.tm_hour) {
             return;
         }
         debug("today: %d/%d/%d, last_update: %d/%d/%d", today.tm_mday, today.tm_mon,
