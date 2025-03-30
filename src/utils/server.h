@@ -1,5 +1,6 @@
 #pragma once
 
+#include <LittleFS.h>
 #include <WebServer.h>
 #include "debug.h"
 
@@ -43,8 +44,8 @@ private:
         html += "</head><body>";
         html += "<h1>ESP32 Log Files</h1>";
 
-        std::vector<String> logFiles = Logger::getInstance()->listLogFiles();
-        
+        std::vector<String> logFiles = listFiles();
+
         if (logFiles.empty()) {
             html += "<p>No log files found</p>";
         } else {
@@ -64,7 +65,7 @@ private:
             return;
         }
 
-        String content = Logger::getInstance()->readLogFile(filename);
+        String content = readFile(filename);
 
         String html = "<!DOCTYPE html><html><head>";
         html += "<title>Log File: " + filename + "</title>";
@@ -80,6 +81,30 @@ private:
         html += "</body></html>";
 
         server.send(200, "text/html", html);
+    }
+
+    std::vector<String> listFiles() {
+        std::vector<String> files;
+
+        File root = LittleFS.open("/");
+        File file = root.openNextFile();
+
+        while(file) {
+            String fname = file.name();
+            if (fname.startsWith("log_") && fname.endsWith(".txt")) {
+                files.push_back("/" + fname);
+            }
+            file = root.openNextFile();
+        }
+
+        return files;
+    }
+
+    String readFile(String filename) {
+        File file = LittleFS.open(filename, "r");
+        String content = file.readString();
+        file.close();
+        return content;
     }
 
 public:
