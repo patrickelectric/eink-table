@@ -11,26 +11,27 @@ private:
     bool initialized;
 
     Logger() : initialized(false) {
-        if (LittleFS.begin(true)) {
-            int nextIndex = 0;
-            File root = LittleFS.open("/");
-            File file = root.openNextFile();
-            while(file) {
-                String fname = file.name();
-                Serial.println("Looking at " + fname);
-                if (fname.startsWith("log_") && fname.endsWith(".txt")) {
-                    int idx = fname.substring(4, fname.length()-4).toInt();
-                    if (idx >= nextIndex) nextIndex = idx + 1;
-                }
-                file = root.openNextFile();
+        if (!LittleFS.begin(true)) {
+            return;
+        }
+        int nextIndex = 0;
+        File root = LittleFS.open("/");
+        File file = root.openNextFile();
+        while(file) {
+            String fname = file.name();
+            Serial.println("Looking at " + fname);
+            if (fname.startsWith("log_") && fname.endsWith(".txt")) {
+                int idx = fname.substring(4, fname.length()-4).toInt();
+                if (idx >= nextIndex) nextIndex = idx + 1;
             }
+            file = root.openNextFile();
+        }
 
-            currentLogPath = "/log_" + String(nextIndex) + ".txt";
-            Serial.println("Opening " + currentLogPath);
-            logFile = LittleFS.open(currentLogPath, "a");
-            if (logFile) {
-                initialized = true;
-            }
+        currentLogPath = "/log_" + String(nextIndex) + ".txt";
+        Serial.println("Opening " + currentLogPath);
+        logFile = LittleFS.open(currentLogPath, "a");
+        if (logFile) {
+            initialized = true;
         }
     }
 
