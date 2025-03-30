@@ -14,6 +14,7 @@ LV_FONT_DECLARE(font_awesome);
 #include "widgets/rate_chart_widget.h"
 #include "widgets/rate_value_widget.h"
 #include "widgets/weather_widget.h"
+#include "widgets/pokemon_widget.h"
 
 #include "sprites/all.h"
 #include "utils/wifi_manager.h"
@@ -28,6 +29,7 @@ auto date = DateWidget();
 auto calendar = CalendarWidget();
 auto network_info = NetworkInfoWidget();
 auto weather = WeatherWidget();
+auto pokemon = PokemonWidget();
 
 LV_IMG_DECLARE(bulbasaur);
 void lvgl_app_main(void)
@@ -38,10 +40,7 @@ void lvgl_app_main(void)
     calendar.update();
     network_info.update();
     weather.update();
-
-    static lv_obj_t* img = lv_img_create(lv_scr_act());
-    lv_img_set_src(img, all_sprites()[random(0, 151)]);
-    lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
+    pokemon.update();
 }
 
 void setup()
