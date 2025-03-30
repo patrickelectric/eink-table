@@ -52,6 +52,8 @@ private:
 
                 if (!connected) {
                     debug("Failed to connect to any network");
+                } else {
+                    debug("Connected to %s", wifi->current_credential->ssid.c_str());
                 }
             }
             vTaskDelay(pdMS_TO_TICKS(5000));
