@@ -51,8 +51,10 @@ public:
             today.tm_year + 1900, last_update.tm_mday, last_update.tm_mon,
             last_update.tm_year + 1900);
         debug("points.size(): %d", points.size());
-        last_update = today;
         points = Rates::last10FridaysRates();
-        RateChartWidget::update_chart(points);
+        if (points.size() != 0) {
+            RateChartWidget::update_chart(points);
+            last_update = today;
+        }
     }
 };
