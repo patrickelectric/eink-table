@@ -36,7 +36,6 @@ public:
 
         static lv_obj_t* bad_label = lv_label_create(cont);
         if (!request.isSuccessful()) {
-            static lv_obj_t* bad_label = lv_label_create(cont);
             lv_label_set_text(bad_label, "Weather fetch error");
             return false;
         }
