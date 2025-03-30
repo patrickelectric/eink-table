@@ -67,6 +67,11 @@ private:
             debug("Connecting to %s: %s", cred.ssid.c_str(),
                 Network::wifiStatusToString(WiFi.status()).c_str());
 
+            if (WiFi.status() == WL_NO_SSID_AVAIL) {
+                debug("No SSID available for %s", cred.ssid.c_str());
+                return false;
+            }
+
             if (WiFi.status() == WL_CONNECTED) {
                 debug("WiFi connected to %s! IP: %s",
                     cred.ssid.c_str(), WiFi.localIP().toString().c_str());
