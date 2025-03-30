@@ -59,6 +59,8 @@ public:
                 icon_txt = "\uf2dc";
             } else if (desc_str.indexOf("fog") >= 0 || desc_str.indexOf("mist") >= 0) {
                 icon_txt = "\uf75f";
+            } else if (desc_str.indexOf("clear") >= 0) {
+                icon_txt = "\uf186";
             } else {
                 icon_txt = String("\uf128 ") + desc_str;
             }
