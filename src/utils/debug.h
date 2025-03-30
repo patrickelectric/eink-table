@@ -14,19 +14,42 @@ private:
         if (!LittleFS.begin(true)) {
             return;
         }
-        int nextIndex = 0;
+
+        size_t totalBytes = LittleFS.totalBytes();
+        size_t usedBytes = LittleFS.usedBytes();
+        size_t freeBytes = totalBytes - usedBytes;
+        Serial.printf("Total: %zu bytes\n", totalBytes);
+        Serial.printf("Used: %zu bytes\n", usedBytes);
+        Serial.printf("Free: %zu bytes\n", freeBytes);
+
+        // Clean LittleFS if less than 10% space remaining
+        if (freeBytes < (totalBytes / 10)) {
+            Serial.println("Low space, cleaning LittleFS...");
+            LittleFS.format();
+            Serial.println("LittleFS cleaned");
+        }
+
+        std::vector<std::pair<int, String>> logFiles;
         File root = LittleFS.open("/");
         File file = root.openNextFile();
+
         while(file) {
             String fname = file.name();
-            Serial.println("Looking at " + fname);
             if (fname.startsWith("log_") && fname.endsWith(".txt")) {
                 int idx = fname.substring(4, fname.length()-4).toInt();
-                if (idx >= nextIndex) nextIndex = idx + 1;
+                logFiles.push_back({idx, fname});
             }
             file = root.openNextFile();
         }
 
+        // Delete oldest files keeping only a couple
+        std::sort(logFiles.begin(), logFiles.end());
+        while (logFiles.size() > 4) {
+            LittleFS.remove("/" + logFiles[0].second);
+            logFiles.erase(logFiles.begin());
+        }
+
+        int nextIndex = logFiles.empty() ? 0 : logFiles.back().first + 1;
         currentLogPath = "/log_" + String(nextIndex) + ".txt";
         Serial.println("Opening " + currentLogPath);
         logFile = LittleFS.open(currentLogPath, "a");
