@@ -67,6 +67,14 @@ public:
     }
 
     void log(const char* message) {
+        size_t totalBytes = LittleFS.totalBytes();
+        size_t usedBytes = LittleFS.usedBytes();
+        size_t freeBytes = totalBytes - usedBytes;
+        if (freeBytes < 1024) {
+            Serial.println("Not enough space in LittleFS for logging");
+            return;
+        }
+
         if (initialized && logFile) {
             logFile.print(message);
             logFile.flush();
