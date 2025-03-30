@@ -31,6 +31,7 @@ public:
 
     ~Request() {
         http.end();
+        client.stop();
         debug("HTTP connection closed");
     }
 
