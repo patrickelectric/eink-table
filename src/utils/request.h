@@ -16,6 +16,7 @@ public:
     Request(const String& url) : success(false), statusCode(0) {
         debug("HTTP Request to: %s", url.c_str());
         client.setInsecure();  // Allow insecure HTTPS connections
+        client.setTimeout(10);
         http.begin(client, url);
         statusCode = http.GET();
         success = (statusCode == 200);
