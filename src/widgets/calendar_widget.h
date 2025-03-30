@@ -16,7 +16,7 @@ public:
     static void update_calendar(tm date)
     {
         const int year = date.tm_year + 1900;
-        const int month = date.tm_mon;
+        const int month = date.tm_mon + 1;
         const int day = date.tm_mday;
 
         uint16_t scr_w = LV_HOR_RES_MAX;
