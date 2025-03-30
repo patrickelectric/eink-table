@@ -25,6 +25,7 @@ def save_lvgl_c_file(name, img, output_dir):
     c_path = os.path.join(output_dir, f"{name}.c")
     with open(c_path, 'w') as f:
         f.write(
+            '#pragma once\n\n'
             '#ifdef __has_include\n'
             '#if __has_include("lvgl.h")\n'
             '#ifndef LV_LVGL_H_INCLUDE_SIMPLE\n'
