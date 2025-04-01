@@ -2,12 +2,14 @@
 
 #include <LittleFS.h>
 #include <WebServer.h>
+#include <WebSocketsServer.h>
 #include "debug.h"
 
 class WebServerManager {
 private:
     static WebServerManager* instance;
     WebServer server;
+    WebSocketsServer webSocket;
     bool initialized;
     TaskHandle_t serverTaskHandle;
 
@@ -15,18 +17,43 @@ private:
         WebServerManager* server = (WebServerManager*)parameter;
         while(true) {
             server->handle();
+            server->webSocket.loop();
             vTaskDelay(pdMS_TO_TICKS(10));
         }
     }
 
-    WebServerManager() : server(80), initialized(false), serverTaskHandle(nullptr) {
+    WebServerManager()
+        : server(80)
+        , webSocket(81)
+        , initialized(false)
+        , serverTaskHandle(nullptr)
+    {
         setupRoutes();
+        setupWebSocket();
+    }
+
+    void setupWebSocket() {
+        webSocket.onEvent([this](uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
+            switch(type) {
+                case WStype_DISCONNECTED:
+                    debug("WebSocket client #%u disconnected", num);
+                    break;
+                case WStype_CONNECTED:
+                    {
+                        webSocket.sendTXT(num, "Connected to ESP32 WebSocket Server\n");
+                        debug("WebSocket client #%u connected", num);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 
     void setupRoutes() {
         server.on("/", HTTP_GET, [this]() { handleRoot(); });
         server.on("/logs", HTTP_GET, [this]() { handleLogRequest(); });
-        
+
         // Handle 404
         server.onNotFound([this]() {
             server.send(404, "text/plain", "File Not Found");
@@ -40,12 +67,22 @@ private:
         html += "body { font-family: Arial, sans-serif; margin: 20px; }";
         html += ".log-link { display: block; margin: 10px 0; padding: 10px; background-color: #f0f0f0; text-decoration: none; color: #333; border-radius: 5px; }";
         html += ".log-link:hover { background-color: #e0e0e0; }";
+        html += "#logArea { height: 400px; overflow-y: auto; background-color: #f0f0f0; padding: 15px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; }";
         html += "</style>";
+        html += "<script>";
+        html += "let ws = new WebSocket('ws://' + window.location.hostname + ':81/');";
+        html += "ws.onmessage = function(event) {";
+        html += "    const logArea = document.getElementById('logArea');";
+        html += "    logArea.innerHTML += event.data;";
+        html += "    logArea.scrollTop = logArea.scrollHeight;";
+        html += "};";
+        html += "</script>";
         html += "</head><body>";
-        html += "<h1>ESP32 Log Files</h1>";
+        html += "<h1>ESP32 Log Viewer</h1>";
+        html += "<div id='logArea'></div>";
+        html += "<h2>Log Files</h2>";
 
         std::vector<String> logFiles = listFiles();
-
         if (logFiles.empty()) {
             html += "<p>No log files found</p>";
         } else {
@@ -118,8 +155,10 @@ public:
     void begin() {
         if (!initialized) {
             server.begin();
+            webSocket.begin();
             initialized = true;
             debug("Web server started on port 80");
+            debug("WebSocket server started on port 81");
 
             xTaskCreate(
                 serverTask,
@@ -137,11 +176,19 @@ public:
         server.handleClient();
     }
 
+    void log(const String& message) {
+        if (initialized) {
+            String formattedMsg = "[" + String(millis()) + "] " + message;
+            webSocket.broadcastTXT(formattedMsg);
+        }
+    }
+
     ~WebServerManager() {
         if (serverTaskHandle != nullptr) {
             vTaskDelete(serverTaskHandle);
         }
         if (initialized) {
+            webSocket.close();
             server.stop();
         }
     }
