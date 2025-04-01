@@ -24,7 +24,7 @@ public:
         lv_obj_set_size(cont, cont_w, cont_h);
         lv_obj_align(cont, LV_ALIGN_TOP_RIGHT, 0, 0);
 
-        lv_obj_t* label = lv_label_create(cont);
+        static lv_obj_t* label = lv_label_create(cont);
         char buffer[15];
         sprintf(buffer, "%d/%d/%d", date.tm_mday, date.tm_mon + 1,
             date.tm_year + 1900);
