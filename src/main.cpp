@@ -75,7 +75,7 @@ void loop()
     lvgl_app_main();
     lv_timer_handler();
     _lv_disp_refr_timer(NULL);
-    delay(5000);
+    delay(20000);
 
     auto freeSRAM = ESP.getFreeHeap();
     auto freePSRAM = ESP.getFreePsram();
