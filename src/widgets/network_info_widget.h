@@ -32,15 +32,14 @@ public:
         lv_obj_set_flex_align(cont, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER,
             LV_FLEX_ALIGN_CENTER);
 
-        std::vector<String> netInfo;
-        netInfo.push_back("SSID: " + WiFi.SSID());
-        netInfo.push_back("IP: " + WiFi.localIP().toString());
-        netInfo.push_back("RSSI: " + String(WiFi.RSSI()) + " dBm");
-        netInfo.push_back("Status: " + Network::wifiStatusToString(WiFi.status()));
-        for (const auto& info : netInfo) {
-            lv_obj_t* label = lv_label_create(cont);
-            lv_label_set_text(label, info.c_str());
-        }
+        static lv_obj_t* ssid_label = lv_label_create(cont);
+        lv_label_set_text(ssid_label, ("SSID: " + WiFi.SSID()).c_str());
+        static lv_obj_t* ip_label = lv_label_create(cont);
+        lv_label_set_text(ip_label, ("IP: " + WiFi.localIP().toString()).c_str());
+        static lv_obj_t* rssi_label = lv_label_create(cont);
+        lv_label_set_text(rssi_label, ("RSSI: " + String(WiFi.RSSI()) + " dBm").c_str());
+        static lv_obj_t* status_label = lv_label_create(cont);
+        lv_label_set_text(status_label, ("Status: " + Network::wifiStatusToString(WiFi.status())).c_str());
     }
 
     void update()
