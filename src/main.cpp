@@ -79,18 +79,13 @@ void loop()
 
     auto freeSRAM = ESP.getFreeHeap();
     auto freePSRAM = ESP.getFreePsram();
-    Serial.println("");
-    Serial.print("**SRAM free = ");
-    Serial.println(freeSRAM);
-    Serial.print("**PSRAM free = ");
-    Serial.println(freePSRAM);
 
-    Serial.printf("Free heap: %u bytes\n", ESP.getFreeHeap());
-    Serial.printf("Free PSRAM: %u bytes\n", ESP.getFreePsram());
-    Serial.printf("Heap size: %u bytes\n", ESP.getHeapSize());
-    Serial.printf("Min free heap: %u bytes\n", ESP.getMinFreeHeap());
-    Serial.printf("Max alloc heap: %u bytes\n", ESP.getMaxAllocHeap());
-    Serial.printf("CPU Temp: %.2f °C\n", temperatureRead());
-    Serial.printf("Uptime: %lu ms\n", millis());
-    Serial.printf("Time: %s\n", tm_to_string(Date::today()).c_str());
+    debug("Free heap: %u bytes", ESP.getFreeHeap());
+    debug("Free PSRAM: %u bytes", ESP.getFreePsram());
+    debug("Heap size: %u bytes", ESP.getHeapSize());
+    debug("Min free heap: %u bytes", ESP.getMinFreeHeap());
+    debug("Max alloc heap: %u bytes", ESP.getMaxAllocHeap());
+    debug("CPU Temp: %.2f °C", temperatureRead());
+    debug("Uptime: %lu ms", millis());
+    debug("Time: %s", tm_to_string(Date::today()).c_str());
 }
