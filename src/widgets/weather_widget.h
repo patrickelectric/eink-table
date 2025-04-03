@@ -67,6 +67,8 @@ public:
             icon_txt = "\uf75f";
         } else if (desc_str.indexOf("clear") >= 0) {
             icon_txt = "\uf186";
+        } else if (desc_str.indexOf("overcast") >= 0) {
+            icon_txt = "\uf6c4";
         } else {
             icon_txt = String("\uf128 ") + desc_str;
         }
