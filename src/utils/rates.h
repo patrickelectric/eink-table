@@ -14,9 +14,9 @@ private:
     }
 
 public:
-    static std::vector<float> last10FridaysRates()
+    static std::vector<float> rates()
     {
-        std::vector<float> fridaysRates;
+        std::vector<float> rates;
 
         Request request("https://economia.awesomeapi.com.br/json/daily/USD-BRL/70");
 
@@ -25,18 +25,12 @@ public:
             deserializeJson(doc, request.getResponse());
 
             for (JsonObject rate : doc.as<JsonArray>()) {
-                long timestamp = atol(rate["timestamp"]);
-                if (getWeekDayFromTimestamp(timestamp) == 5) { // Friday
-                    float value = atof(rate["bid"]);
-                    fridaysRates.push_back(value);
-                }
-
-                if (fridaysRates.size() >= 10)
-                    break;
+                float value = atof(rate["bid"]);
+                rates.push_back(value);
             }
         }
 
-        return fridaysRates;
+        return rates;
     }
 
     static float currentRate()
@@ -56,9 +50,9 @@ public:
         return 0.0;
     }
 
-    static float rate30DaysAgo()
+    static float medianRate30DaysAgo()
     {
-        debug("Getting rate 30 days ago");
+        debug("Getting median rate 30 days ago");
         Request request("https://economia.awesomeapi.com.br/json/daily/USD-BRL/30");
 
         if (request.isSuccessful()) {
@@ -69,8 +63,13 @@ public:
             debug("Rate 30 days ago deserialized");
             JsonArray arr = doc.as<JsonArray>();
             if (arr.size() > 0) {
-                JsonObject oldest = arr[arr.size() - 1];
-                return atof(oldest["bid"]);
+                float sum = 0.0f;
+                int count = 0;
+                for (JsonObject rate : arr) {
+                    sum += atof(rate["bid"]);
+                    count++;
+                }
+                return sum / static_cast<float>(count);
             }
         }
 

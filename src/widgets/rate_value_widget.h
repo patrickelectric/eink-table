@@ -49,7 +49,7 @@ public:
 
         last_update = today;
         value = Rates::currentRate();
-        auto last_30_days_value = Rates::rate30DaysAgo();
+        auto last_30_days_value = Rates::medianRate30DaysAgo();
         RateValueWidget::update_value(value, last_30_days_value);
     }
 };
